@@ -31,17 +31,21 @@ def analyze_folder_by_name(folder_path):
                     # 统计第一次攻击
                     stats["total_attacks"] += 1
                     stats["first_attack_total"] += 1
-                    stars = count_stars(entry.get("第一次攻击详情", "未使用"))
-                    stats["star_counts"][stars] += 1
-                    if stars == 0:
+                    first_attack_detail = entry.get("第一次攻击详情", "未使用")
+                    if first_attack_detail != "未使用":
+                        stars = count_stars(first_attack_detail)
+                        stats["star_counts"][stars] += 1
+                    else:
                         stats["unused_attacks"] += 1
 
                     # 统计第二次攻击
                     stats["total_attacks"] += 1
                     stats["second_attack_total"] += 1
-                    stars = count_stars(entry.get("第二次攻击详情", "未使用"))
-                    stats["star_counts"][stars] += 1
-                    if stars == 0:
+                    second_attack_detail = entry.get("第二次攻击详情", "未使用")
+                    if second_attack_detail != "未使用":
+                        stars = count_stars(second_attack_detail)
+                        stats["star_counts"][stars] += 1
+                    else:
                         stats["unused_attacks"] += 1
             except json.JSONDecodeError:
                 print(f"文件解析失败: {file_path}")
