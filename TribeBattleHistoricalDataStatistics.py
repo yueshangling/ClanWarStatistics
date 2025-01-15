@@ -1,6 +1,8 @@
 import os
 import json
 import pandas as pd
+from openpyxl import Workbook
+from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from collections import defaultdict
 
 def count_stars(details):
@@ -85,14 +87,75 @@ def analyze_folder_by_name(folder_path):
 
     return results
 
-def export_to_excel_by_name(results, output_path):
-    """将按名称统计的结果导出到 Excel"""
-    df = pd.DataFrame(results)
-    df.to_excel(output_path, index=False, sheet_name="统计结果", engine="openpyxl")
+def export_to_excel_with_styles(results, output_path):
+    """将结果导出到 Excel 并设置样式"""
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "统计结果"
+
+    # 定义表头
+    headers_player = [
+        "名称", "1星", "1星占比", "2星", "2星占比", "3星", "3星占比", 
+        "黑三", "黑三占比", "总进攻次数", "未使用进攻次数", 
+        "未使用进攻次数占比"
+    ]
+    ws.append(headers_player)
+
+    # 设置表头样式
+    header_fill = PatternFill(start_color="CCCCCC", end_color="CCCCCC", fill_type="solid")
+    header_font = Font(bold=True, size=14, color="000000")
+    header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    header_border = Border(
+        top=Side(style="thin"),
+        left=Side(style="thin"),
+        bottom=Side(style="thin"),
+        right=Side(style="thin")
+    )
+    for col_num, col_header in enumerate(headers_player, start=1):
+        cell = ws.cell(row=1, column=col_num)
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = header_alignment
+        cell.border = header_border
+
+    # 填充数据
+    for result in results:
+        row = [
+            result["名称"],
+            result["1星"],
+            result["1星占比"],  # 确保是浮点数
+            result["2星"],
+            result["2星占比"],  # 确保是浮点数
+            result["3星"],
+            result["3星占比"],  # 确保是浮点数
+            result["黑三"],
+            result["黑三占比"],  # 确保是浮点数
+            result["总进攻次数"],
+            result["未使用进攻次数"],
+            result["未使用进攻次数占比"],  # 确保是浮点数
+        ]
+        ws.append(row)
+
+    # 设置百分比列格式
+    percent_columns = [3, 5, 7, 9, 12]
+    for col in percent_columns:
+        for cell in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=col, max_col=col):
+            cell[0].number_format = "0.00%"  # 设置为百分比格式，且存储为数值
+
+    # 标红未使用进攻次数等于总进攻次数的行
+    red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=10, max_col=11):
+        total_attacks_cell, unused_attacks_cell = row
+        if total_attacks_cell.value == unused_attacks_cell.value:
+            for cell in row:
+                cell.fill = red_fill
+
+    wb.save(output_path)
     print(f"统计结果已保存到: {output_path}")
+
 
 # 调用函数
 folder_path = "TribeBattleHistoricalData"  # 替换为你的 JSON 文件夹路径
-output_path = "output_by_name.xlsx"  # 输出文件路径
+output_path = "部落战统计.xlsx"  # 输出文件路径
 results = analyze_folder_by_name(folder_path)
-export_to_excel_by_name(results, output_path)
+export_to_excel_with_styles(results, output_path)
