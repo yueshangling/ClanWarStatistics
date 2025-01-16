@@ -5,12 +5,26 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from collections import defaultdict
 
+headers_player = [
+    "名称",
+    "1星",
+    "1星占比",
+    "2星",
+    "2星占比",
+    "3星占比",
+    "黑三",
+    "黑三占比",
+    "总进攻次数",
+    "未使用进攻次数",
+    "未使用进攻次数占比",
+    "第一次攻击占比",
+    "第二次攻击占比",
+]
 def count_stars(details):
     """统计星星数"""
     if details == "未使用":
         return 0
     return details.count('★')
-
 def analyze_folder_by_name(folder_path):
     stats_by_name = defaultdict(lambda: {
         "total_attacks": 0,
@@ -90,7 +104,17 @@ def analyze_folder_by_name(folder_path):
         })
 
     return results
-
+def mark_rows_red(ws):
+    # 定义红色填充样式
+    red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+    # 遍历从第二行开始的每一行，从第 10 列到第 11 列
+    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=10, max_col=11):
+        total_attacks_cell, unused_attacks_cell = row
+        if total_attacks_cell.value == unused_attacks_cell.value:
+            # 获取整行的单元格范围
+            full_row = ws[row[0].row]
+            for cell in full_row:
+                cell.fill = red_fill
 def export_to_excel_with_styles(results, output_path):
     """将结果导出到 Excel 并设置样式"""
     wb = Workbook()
@@ -145,19 +169,29 @@ def export_to_excel_with_styles(results, output_path):
     for col in percent_columns:
         for cell in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=col, max_col=col):
             cell[0].number_format = "0.00%"  # 设置为百分比格式，且存储为数值
-
     # 标红未使用进攻次数等于总进攻次数的行
-    red_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
-    for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=10, max_col=11):
-        total_attacks_cell, unused_attacks_cell = row
-        if total_attacks_cell.value == unused_attacks_cell.value:
-            for cell in row:
-                cell.fill = red_fill
-
+    mark_rows_red(ws)
+    adjust_column_width(ws)
     wb.save(output_path)
     print(f"统计结果已保存到: {output_path}")
-
-
+def adjust_column_width(ws):
+    # 计算每一列的最大字符数，包括标题行和内容行
+    max_lengths = {}
+    # 先处理标题行
+    for i, header in enumerate(headers_player):
+        col_letter = chr(65 + i)  # 从 A 开始的列字母，A 的 ASCII 码是 65
+        max_lengths[col_letter] = len(header)
+    # 遍历工作表的行和单元格
+    for row in ws.iter_rows():
+        for cell in row:
+            col_letter = cell.column_letter
+            try:
+                max_lengths[col_letter] = max(max_lengths[col_letter], len(str(cell.value)))
+            except:
+                max_lengths[col_letter] = len(str(cell.value))
+    # 根据最大字符数设置列宽，并增加一些缓冲空间
+    for col, length in max_lengths.items():
+        ws.column_dimensions[col].width = length * 2.5 + 2  # 增加一些缓冲空间
 # 调用函数
 folder_path = "TribeBattleHistoricalData"  # 替换为你的 JSON 文件夹路径
 output_path = "部落战统计.xlsx"  # 输出文件路径

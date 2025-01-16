@@ -2,6 +2,7 @@
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
+import datetime
 import json
 with open('data.json', 'r', encoding='utf-8') as file:
     game_data = json.load(file)
@@ -55,9 +56,29 @@ for index, data in enumerate(game_data, start=1):
             left=Side(style="thin"),
             bottom=Side(style="thin"),
             right=Side(style="thin")
-
         )
-
+def adjust_column_width(ws):
+    # 计算每一列的最大字符数，包括标题行和内容行
+    max_lengths = {}
+    # 先处理标题行
+    for i, header in enumerate(headers_player):
+        col_letter = chr(65 + i)  # 从 A 开始的列字母，A 的 ASCII 码是 65
+        max_lengths[col_letter] = len(header)
+    # 遍历工作表的行和单元格
+    for row in ws.iter_rows():
+        for cell in row:
+            col_letter = cell.column_letter
+            try:
+                max_lengths[col_letter] = max(max_lengths[col_letter], len(str(cell.value)))
+            except:
+                max_lengths[col_letter] = len(str(cell.value))
+    # 根据最大字符数设置列宽，并增加一些缓冲空间
+    for col, length in max_lengths.items():
+        ws.column_dimensions[col].width = length * 2.5 + 2  # 增加一些缓冲空间
+adjust_column_width(worksheet_player)
+now = datetime.datetime.now()
+date_str = now.strftime("%Y-%m-%d")
+filename =  date_str + ".xlsx"
 # 保存工作簿
-workbook.save("game_data.xlsx")
-print("数据已成功写入game_data.xlsx文件，且设置了相应的样式。")
+workbook.save(filename)
+print("成功保存文件：" + filename)
