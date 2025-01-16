@@ -151,16 +151,16 @@ def export_to_excel_with_styles(results, output_path):
         row = [
             result["名称"],
             result["1星"],
-            result["1星占比"],  # 确保是浮点数
+            float(result["1星占比"].replace("%", "")) / 100,  # 将百分比字符串转换为浮点数
             result["2星"],
-            result["2星占比"],  # 确保是浮点数
+            float(result["2星占比"].replace("%", "")) / 100,  # 将百分比字符串转换为浮点数
             result["3星"],
-            result["3星占比"],  # 确保是浮点数
+            float(result["3星占比"].replace("%", "")) / 100,  # 将百分比字符串转换为浮点数
             result["黑三"],
-            result["黑三占比"],  # 确保是浮点数
+            float(result["黑三占比"].replace("%", "")) / 100,  # 将百分比字符串转换为浮点数
             result["总进攻次数"],
             result["未使用进攻次数"],
-            result["未使用进攻次数占比"],  # 确保是浮点数
+            float(result["未使用进攻次数占比"].replace("%", "")) / 100,  # 将百分比字符串转换为浮点数
         ]
         ws.append(row)
 
