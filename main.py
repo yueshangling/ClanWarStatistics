@@ -4,7 +4,7 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 import datetime
 import json
-with open('data.json', 'r', encoding='utf-8') as file:
+with open('./TribeBattleHistoricalData/2025-1-13/2025-1-13.json', 'r', encoding='utf-8') as file:
     game_data = json.load(file)
 
 # 创建工作簿
@@ -40,7 +40,7 @@ for col_num, col_header in enumerate(headers_player, start=1):
 # 填充我方队员进攻数据，并设置数据单元格样式
 for index, data in enumerate(game_data, start=1):
     row_data = [index, data["名称"], data["职位"], data.get("分数", "已退出"), data["第一次攻击"],
-                data["第一次攻击详情"], data["第二次攻击"], data["第二次攻击详情"], data["获得的星"],]
+                data["第一次攻击详情"], data["第二次攻击"], data["第二次攻击详情"], data["获得的星"], data["评价"]]
     worksheet_player.append(row_data)
     for col_num in range(1, len(row_data) + 1):
         cell = worksheet_player.cell(row=worksheet_player.max_row, column=col_num)
@@ -58,23 +58,24 @@ for index, data in enumerate(game_data, start=1):
             right=Side(style="thin")
         )
 def adjust_column_width(ws):
-    # 计算每一列的最大字符数，包括标题行和内容行
     max_lengths = {}
-    # 先处理标题行
     for i, header in enumerate(headers_player):
-        col_letter = chr(65 + i)  # 从 A 开始的列字母，A 的 ASCII 码是 65
-        max_lengths[col_letter] = len(header)
-    # 遍历工作表的行和单元格
+        col_letter = chr(65 + i)
+        max_lengths[col_letter] = {'value': len(header), 'type': 'str'}
     for row in ws.iter_rows():
         for cell in row:
             col_letter = cell.column_letter
             try:
-                max_lengths[col_letter] = max(max_lengths[col_letter], len(str(cell.value)))
+                if isinstance(cell.value, float):  # 如果是数字
+                    max_lengths[col_letter]['type'] = 'int'
+                max_lengths[col_letter]['value'] = max(max_lengths[col_letter]['value'], len(str(cell.value)))
             except:
-                max_lengths[col_letter] = len(str(cell.value))
-    # 根据最大字符数设置列宽，并增加一些缓冲空间
+                max_lengths[col_letter] = {'value': len(str(cell.value)), 'type': 'str'}
     for col, length in max_lengths.items():
-        ws.column_dimensions[col].width = length * 2.5 + 2  # 增加一些缓冲空间
+        if length['type'] == 'int':
+            ws.column_dimensions[col].width = length['value'] + 4  # 增加数字列的宽度
+        else:
+            ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 adjust_column_width(worksheet_player)
 now = datetime.datetime.now()
 date_str = now.strftime("%Y-%m-%d")

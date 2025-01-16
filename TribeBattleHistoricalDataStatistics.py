@@ -175,23 +175,24 @@ def export_to_excel_with_styles(results, output_path):
     wb.save(output_path)
     print(f"统计结果已保存到: {output_path}")
 def adjust_column_width(ws):
-    # 计算每一列的最大字符数，包括标题行和内容行
     max_lengths = {}
-    # 先处理标题行
     for i, header in enumerate(headers_player):
-        col_letter = chr(65 + i)  # 从 A 开始的列字母，A 的 ASCII 码是 65
-        max_lengths[col_letter] = len(header)
-    # 遍历工作表的行和单元格
+        col_letter = chr(65 + i)
+        max_lengths[col_letter] = {'value': len(header), 'type': 'str'}
     for row in ws.iter_rows():
         for cell in row:
             col_letter = cell.column_letter
             try:
-                max_lengths[col_letter] = max(max_lengths[col_letter], len(str(cell.value)))
+                if isinstance(cell.value, float):  # 如果是数字
+                    max_lengths[col_letter]['type'] = 'int'
+                max_lengths[col_letter]['value'] = max(max_lengths[col_letter]['value'], len(str(cell.value)))
             except:
-                max_lengths[col_letter] = len(str(cell.value))
-    # 根据最大字符数设置列宽，并增加一些缓冲空间
+                max_lengths[col_letter] = {'value': len(str(cell.value)), 'type': 'str'}
     for col, length in max_lengths.items():
-        ws.column_dimensions[col].width = length * 2.5 + 2  # 增加一些缓冲空间
+        if length['type'] == 'int':
+            ws.column_dimensions[col].width = length['value'] + 4  # 增加数字列的宽度
+        else:
+            ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 # 调用函数
 folder_path = "TribeBattleHistoricalData"  # 替换为你的 JSON 文件夹路径
 output_path = "部落战统计.xlsx"  # 输出文件路径
