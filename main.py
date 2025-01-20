@@ -39,7 +39,7 @@ for col_num, col_header in enumerate(headers_player, start=1):
 
 # 填充我方队员进攻数据，并设置数据单元格样式
 for index, data in enumerate(game_data, start=1):
-    row_data = [index, data["名称"], data["职位"], data.get("分数", "已退出"), data["第一次攻击"],
+    row_data = [index, data["名称"], data["职位"], data.get("部落等级", "已退出"), data["第一次攻击"],
                 data["第一次攻击详情"], data["第二次攻击"], data["第二次攻击详情"], data["获得的星"], data.get("评价", "")]
     worksheet_player.append(row_data)
     for col_num in range(1, len(row_data) + 1):
