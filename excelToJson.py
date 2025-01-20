@@ -17,6 +17,7 @@ for root, dirs, files in os.walk(folder_path):
             df = pd.read_excel(file_path)
 
             # 将空值替换为空字符串
+            df = df.astype(object)
             df.fillna('', inplace=True)
             
             # 构建 JSON 数据
