@@ -4,7 +4,7 @@ import pandas as pd
 import json
 
 # 定义文件夹路径
-folder_path = 'TribeBattleHistoricalData/2025-1-31/'
+folder_path = 'ClanCompetitionStatistics/2025/2月/'
 
 # 递归遍历文件夹
 for root, dirs, files in os.walk(folder_path):
