@@ -4,7 +4,7 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 import datetime
 import json
-with open('data.json', 'r', encoding='utf-8') as file:
+with open('./TribeBattleHistoricalData/2025-1-29/2025-1-29.json', 'r', encoding='utf-8') as file:
     game_data = json.load(file)
 
 # 创建工作簿
@@ -15,8 +15,7 @@ worksheet_player = workbook.active
 worksheet_player.title = "我方队员进攻"
 
 # 定义表头数据
-headers_player = ["序号", "名称", "职位", "部落等级", "第一次攻击", "第一次攻击详情", "第二次攻击", "第二次攻击详情",
-                  "获得的星", "评价"]
+headers_player = ["序号", "名称", "职位", "部落等级", "第一次攻击", "第一次攻击详情", "第二次攻击", "第二次攻击详情", "评价"]
 worksheet_player.append(headers_player)
 
 # 设置表头样式
@@ -40,7 +39,7 @@ for col_num, col_header in enumerate(headers_player, start=1):
 # 填充我方队员进攻数据，并设置数据单元格样式
 for index, data in enumerate(game_data, start=1):
     row_data = [index, data["名称"], data["职位"], data.get("部落等级", "已退出"), data["第一次攻击"],
-                data["第一次攻击详情"], data["第二次攻击"], data["第二次攻击详情"], data["获得的星"], data.get("评价", "")]
+                data["第一次攻击详情"], data["第二次攻击"], data["第二次攻击详情"], data.get("评价", "")]
     worksheet_player.append(row_data)
     for col_num in range(1, len(row_data) + 1):
         cell = worksheet_player.cell(row=worksheet_player.max_row, column=col_num)

@@ -20,6 +20,61 @@ headers_player = [
     "第一次攻击占比",
     "第二次攻击占比",
 ]
+# 新增功能：收集所有两次进攻未使用的记录
+def collect_unused_attacks(folder_path):
+    """收集所有两次攻击都未使用的记录"""
+    dir_unused = defaultdict(list)  # 按目录分组的记录
+    total_unused = []               # 总记录
+    
+    for root, _, files in os.walk(folder_path):
+        for file in files:
+            if file.endswith('.json'):
+                file_path = os.path.join(root, file)
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    try:
+                        data = json.load(f)
+                        for entry in data:
+                            # 检查两次攻击是否都未使用
+                            first = entry.get("第一次攻击详情", "未使用")
+                            second = entry.get("第二次攻击详情", "未使用")
+                            if first == "未使用" and second == "未使用":
+                                # 获取相对路径用于分组
+                                relative_path = os.path.relpath(root, folder_path)
+                                record = {
+                                    "名称": entry.get("名称", "未知"),
+                                    "第一次攻击详情": first,
+                                    "第二次攻击详情": second,
+                                    "来源文件": os.path.basename(file_path),
+                                    "来源目录": relative_path
+                                }
+                                dir_unused[relative_path].append(record)
+                                total_unused.append(record)
+                    except json.JSONDecodeError:
+                        print(f"文件解析失败: {file_path}")
+    return dir_unused, total_unused
+def export_unused_records(dir_unused, total_unused, base_folder):
+    """导出未使用记录到对应目录和总文件"""
+    # 导出各目录的记录
+    for relative_path, records in dir_unused.items():
+        if records:
+            # 创建目录路径
+            dir_path = os.path.join(base_folder, relative_path)
+            os.makedirs(dir_path, exist_ok=True)
+            
+            # 生成 Excel 文件
+            output_path = os.path.join(dir_path, "两次未使用记录.xlsx")
+            df = pd.DataFrame(records)
+            df.to_excel(output_path, index=False)
+            print(f"已生成目录记录文件: {output_path}")
+    
+    # 导出总记录
+    if total_unused:
+        output_path = os.path.join(base_folder, "总未使用记录.xlsx")
+        df = pd.DataFrame(total_unused)
+        df.to_excel(output_path, index=False)
+        print(f"已生成总记录文件: {output_path}")
+    else:
+        print("没有未使用的进攻记录")
 def count_stars(details):
     """统计星星数"""
     if details == "未使用":
@@ -198,3 +253,6 @@ folder_path = "TribeBattleHistoricalData"  # 替换为你的 JSON 文件夹路�
 output_path = "部落战统计.xlsx"  # 输出文件路径
 results = analyze_folder_by_name(folder_path)
 export_to_excel_with_styles(results, output_path)
+# 新增未使用记录统计
+dir_unused, total_unused = collect_unused_attacks(folder_path)
+export_unused_records(dir_unused, total_unused, folder_path)
