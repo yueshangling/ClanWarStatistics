@@ -250,7 +250,7 @@ def adjust_column_width(ws):
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 # 调用函数
 folder_path = "TribeBattleHistoricalData"  # 替换为你的 JSON 文件夹路径
-output_path = "部落战统计.xlsx"  # 输出文件路径
+output_path = "TribeBattleHistoricalData/部落战统计.xlsx"  # 输出文件路径
 results = analyze_folder_by_name(folder_path)
 export_to_excel_with_styles(results, output_path)
 # 新增未使用记录统计
