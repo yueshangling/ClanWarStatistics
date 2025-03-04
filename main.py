@@ -12,7 +12,7 @@ workbook = Workbook()
 worksheet_player = workbook.active
 worksheet_player.title = "我方队员进攻"
 # 定义表头数据
-type = 2  
+type = 2
 if type == 1:
     headers_player = ["序号", "名称", "职位", "部落等级", "第一次攻击", "第一次攻击详情", "第二次攻击", "第二次攻击详情", ""]
 else:
