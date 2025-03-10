@@ -264,8 +264,8 @@ def adjust_column_width(ws,headers):
         else:
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 # 运行主程序
-folder_path = "ClanCompetitionStatistics/2025/2月/"
-output_path = "ClanCompetitionStatistics/2025/2月/2025年2月联赛统计结果.xlsx"
+folder_path = "ClanCompetitionStatistics/2025/3月/"
+output_path = "ClanCompetitionStatistics/2025/3月/2025年3月联赛统计结果.xlsx"
 
 results = analyze_folder_by_name(folder_path, mode)
 export_to_excel_with_styles(results, output_path, mode)
