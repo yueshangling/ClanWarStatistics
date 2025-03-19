@@ -19,6 +19,7 @@ headers_player = [
     "黑三",
     "黑三占比",
     "总进攻次数",
+    "总获得星星",  # 添加缺少的逗号
     "未使用进攻次数",
     "未使用进攻次数占比",
     "第一次攻击占比",
@@ -169,6 +170,7 @@ def analyze_folder_by_name(folder_path, mode):
             "黑三": stars_0,
             "黑三占比": f"{stars_0 / total:.2%}" if total else "0.00%",
             "总进攻次数": total,
+            "总获得星星": stars_1 * 1 + stars_2 * 2 + stars_3 * 3,  # 添加统计值
             "未使用进攻次数": unused,
             "未使用进攻次数占比": f"{unused / total:.2%}" if total else "0.00%",
             "第一次攻击占比": f"{first_total / total:.2%}" if total else "0.00%",
@@ -197,7 +199,7 @@ def export_to_excel_with_styles(results, output_path, mode):
     # 动态表头
     headers = [
         "名称", "1星", "1星占比", "2星", "2星占比", "3星", "3星占比",
-        "黑三", "黑三占比", "总进攻次数", "未使用进攻次数", "未使用进攻次数占比",
+        "黑三", "黑三占比", "总进攻次数", "总获得星星","未使用进攻次数", "未使用进攻次数占比",
         "第一次攻击占比"
     ]
     if mode == 2:
@@ -264,8 +266,8 @@ def adjust_column_width(ws,headers):
         else:
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 # 运行主程序
-folder_path = "ClanCompetitionStatistics/2025/3月/"
-output_path = "ClanCompetitionStatistics/2025/3月/2025年3月联赛统计结果.xlsx"
+folder_path = "ClanCompetitionStatistics/2025/2月/"
+output_path = "ClanCompetitionStatistics/2025/2月/2025年2月联赛统计结果.xlsx"
 
 results = analyze_folder_by_name(folder_path, mode)
 export_to_excel_with_styles(results, output_path, mode)
