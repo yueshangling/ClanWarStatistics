@@ -2,17 +2,38 @@
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
-import datetime
 import json
-with open('./data.json', 'r', encoding='utf-8') as file:
-    game_data = json.load(file)
+file1='3月'
+file2='4月'
+with open('./' + file1 + '/联赛参与名单.json', 'r', encoding='utf-8') as f:
+    data1 = json.load(f)
+with open('./' + file2 + '/联赛参与名单.json', 'r', encoding='utf-8') as f:
+    data2 = json.load(f)
+
+# 创建字典方便查找
+data1_dict = {item['名称']: {'繁荣度': int(item['繁荣度']), '大本': item['大本']} for item in data1}
+data2_dict = {item['名称']: {'繁荣度': int(item['繁荣度']), '大本': item['大本']} for item in data2}
+
+# 计算繁荣度变化并包含大本等级
+result = []
+for name, info2 in data2_dict.items():
+    if name in data1_dict:
+        change = info2['繁荣度'] - data1_dict[name]['繁荣度']
+        result.append({
+            '名称': name,
+            '原繁荣度': data1_dict[name]['繁荣度'],
+            '新繁荣度': info2['繁荣度'],
+            '变化量': change,
+            '原大本等级': data1_dict[name]['大本'],
+            '新大本等级': info2['大本']
+        })
 # 创建工作簿
 workbook = Workbook()
 # 处理我方队员进攻数据的工作表
 worksheet_player = workbook.active
-worksheet_player.title = "我方队员进攻"
+worksheet_player.title = "繁荣度统计"
 # 定义表头数据
-headers_player = ["序号", "名称", "繁荣度", "大本", ]
+headers_player = ["序号", "名称", "原繁荣度", "新繁荣度",'繁荣度变化量','原大本等级','新大本等级' ]
 worksheet_player.append(headers_player)
 
 # 设置表头样式
@@ -34,11 +55,8 @@ for col_num, col_header in enumerate(headers_player, start=1):
     cell.border = header_border
 
 # 填充我方队员进攻数据，并设置数据单元格样式
-for index, data in enumerate(game_data, start=1):
-    if type == 1:
-        row_data = [index, data["名称"], data["繁荣度"], data.get("大本", "")]
-    else:
-        row_data = [index, data["名称"], data["繁荣度"], data.get("大本", "")]
+for index, data in enumerate(result, start=1):
+    row_data = [index, data["名称"], data["原繁荣度"], data.get("新繁荣度", ""),data.get("变化量", ""),data.get("原大本等级", ""),data.get("新大本等级", "")]
     worksheet_player.append(row_data)
 def adjust_column_width(ws):
     max_lengths = {}
@@ -60,7 +78,7 @@ def adjust_column_width(ws):
         else:
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 adjust_column_width(worksheet_player)
-date_str = '联赛参与名单'
+date_str = file1 + '-' + file2 + '繁荣度变化'
 filename =  date_str + ".xlsx"
 # 保存工作簿
 workbook.save(filename)
