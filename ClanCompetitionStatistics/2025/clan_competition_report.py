@@ -14,6 +14,20 @@ with open('./' + file2 + '/联赛参与名单.json', 'r', encoding='utf-8') as f
 data1_dict = {item['名称']: {'繁荣度': int(item['繁荣度']), '大本': item['大本']} for item in data1}
 data2_dict = {item['名称']: {'繁荣度': int(item['繁荣度']), '大本': item['大本']} for item in data2}
 
+# 找出只在3月出现的成员
+only_in_data1 = [name for name in data1_dict if name not in data2_dict]
+# 找出只在4月出现的成员
+only_in_data2 = [name for name in data2_dict if name not in data1_dict]
+
+print("只在3月出现的成员:")
+for name in only_in_data1:
+    print(f"{name}: 繁荣度 {data1_dict[name]['繁荣度']}, 大本 {data1_dict[name]['大本']}")
+
+print("\n只在4月出现的成员:")
+for name in only_in_data2:
+    print(f"{name}: 繁荣度 {data2_dict[name]['繁荣度']}, 大本 {data2_dict[name]['大本']}")
+
+# ... existing code ...
 # 计算繁荣度变化并包含大本等级
 result = []
 for name, info2 in data2_dict.items():
