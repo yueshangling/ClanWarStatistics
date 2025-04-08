@@ -4,7 +4,8 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 import datetime
 import json
-with open('./data.json', 'r', encoding='utf-8') as file:
+dataStr = './ClanCompetitionStatistics/2025/4月/比赛5/2025-04-07'
+with open(dataStr + '.json', 'r', encoding='utf-8') as file:
     game_data = json.load(file)
 # 创建工作簿
 workbook = Workbook()
@@ -81,9 +82,7 @@ def adjust_column_width(ws):
         else:
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 adjust_column_width(worksheet_player)
-now = datetime.datetime.now()
-date_str = now.strftime("%Y-%m-%d")
-filename =  date_str + ".xlsx"
+filename =  dataStr + ".xlsx"
 # 保存工作簿
 workbook.save(filename)
 print("成功保存文件：" + filename)
