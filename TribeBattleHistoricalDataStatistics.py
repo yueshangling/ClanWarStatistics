@@ -6,7 +6,7 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from collections import defaultdict
 
 # 用户选择攻击模式
-mode = int(input("请选择攻击模式（1为单次攻击，2为两次攻击）："))
+mode = 1
 
 headers_player = [
     "名称",
@@ -266,8 +266,8 @@ def adjust_column_width(ws,headers):
         else:
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 # 运行主程序
-folder_path = "ClanCompetitionStatistics/2025/2月/"
-output_path = "ClanCompetitionStatistics/2025/2月/2025年2月联赛统计结果.xlsx"
+folder_path = "ClanCompetitionStatistics/2025/4月/"
+output_path = "ClanCompetitionStatistics/2025/4月/2025年4月联赛统计结果.xlsx"
 
 results = analyze_folder_by_name(folder_path, mode)
 export_to_excel_with_styles(results, output_path, mode)
