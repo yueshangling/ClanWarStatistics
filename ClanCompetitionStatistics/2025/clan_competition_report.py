@@ -3,8 +3,8 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 import json
-file1='3月'
-file2='4月'
+file1='4月'
+file2='5月'
 with open('./' + file1 + '/联赛参与名单.json', 'r', encoding='utf-8') as f:
     data1 = json.load(f)
 with open('./' + file2 + '/联赛参与名单.json', 'r', encoding='utf-8') as f:
