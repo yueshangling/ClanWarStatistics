@@ -4,7 +4,7 @@ from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 import datetime
 import json
-dataStr = './ClanCompetitionStatistics/2025/4月/比赛7/2025-04-09'
+dataStr = './ClanCompetitionStatistics/2025/5月/比赛2/2025-05-04'
 with open(dataStr + '.json', 'r', encoding='utf-8') as file:
     game_data = json.load(file)
 # 创建工作簿

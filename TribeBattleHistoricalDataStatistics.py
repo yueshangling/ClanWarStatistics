@@ -124,6 +124,9 @@ def analyze_folder_by_name(folder_path, mode):
                     first_attack_detail = entry.get("第一次攻击详情", "未使用")
                     if first_attack_detail != "未使用":
                         stars = count_stars(first_attack_detail)
+                        # 判断stars是否与获得的星星数相同
+                        if  stars != int(entry.get("获得的星", "0")):
+                            print(f"第一次攻击详情错误: {file_path} - {name} - {first_attack_detail}")
                         stats["star_counts"][stars] += 1
                     else:
                         stats["unused_attacks"] += 1
@@ -266,8 +269,8 @@ def adjust_column_width(ws,headers):
         else:
             ws.column_dimensions[col].width = length['value'] * 2.5 + 2
 # 运行主程序
-folder_path = "ClanCompetitionStatistics/2025/4月/"
-output_path = "ClanCompetitionStatistics/2025/4月/2025年4月联赛统计结果.xlsx"
+folder_path = "ClanCompetitionStatistics/2025/5月/"
+output_path = "ClanCompetitionStatistics/2025/5月/2025年5月联赛统计结果.xlsx"
 
 results = analyze_folder_by_name(folder_path, mode)
 export_to_excel_with_styles(results, output_path, mode)
