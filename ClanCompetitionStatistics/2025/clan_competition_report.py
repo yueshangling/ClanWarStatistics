@@ -3,8 +3,8 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 import json
-file1='4月'
-file2='5月'
+file1='5月'
+file2='6月'
 with open('./' + file1 + '/联赛参与名单.json', 'r', encoding='utf-8') as f:
     data1 = json.load(f)
 with open('./' + file2 + '/联赛参与名单.json', 'r', encoding='utf-8') as f:
@@ -19,11 +19,11 @@ only_in_data1 = [name for name in data1_dict if name not in data2_dict]
 # 找出只在4月出现的成员
 only_in_data2 = [name for name in data2_dict if name not in data1_dict]
 
-print("只在3月出现的成员:")
+print("只在" + file1 + "出现的成员:")
 for name in only_in_data1:
     print(f"{name}: 繁荣度 {data1_dict[name]['繁荣度']}, 大本 {data1_dict[name]['大本']}")
 
-print("\n只在4月出现的成员:")
+print("只在" + file2 + "出现的成员:")
 for name in only_in_data2:
     print(f"{name}: 繁荣度 {data2_dict[name]['繁荣度']}, 大本 {data2_dict[name]['大本']}")
 
